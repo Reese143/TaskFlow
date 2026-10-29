@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#4565ee">
+<title>TaskFlow — пространство задач</title>
+<script>try{const p=JSON.parse(localStorage.getItem('taskflow-preferences')||'{}');document.documentElement.dataset.theme=p.theme==='dark'?'dark':'light';document.documentElement.dataset.accent=['blue','violet','green','orange'].includes(p.accent)?p.accent:'blue';document.documentElement.dataset.density=p.density==='compact'?'compact':'comfortable';}catch(e){}</script>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<aside class="sidebar">
+<a class="brand" href="#dashboard"><span class="logo">✓</span> taskflow</a>
+<div class="workspace"><div class="avatar">M</div><div><b>Моё пространство</b><small>Личный план</small></div><span class="dots">•••</span></div>
+<div class="nav-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+<button class="side-link active" data-view="dashboard" data-filter="all">▦ <span>Все задачи</span><b id="allCount">0</b></button>
+<button class="side-link" data-view="dashboard" data-filter="active">◷ <span>В процессе</span></button>
+<button class="side-link" data-view="dashboard" data-filter="done">✓ <span>Выполнено</span></button>
+<div class="nav-label nav-label-secondary">ПЕРСОНАЛИЗАЦИЯ</div>
+<button class="side-link" id="settingsNav" data-view="settings">⚙ <span>Настройки</span></button>
+<div class="sidebar-bottom"><div class="tip"><span>✦ Совет дня</span><p id="dailyTip">Большая цель начинается с одной маленькой задачи.</p></div><small>TaskFlow · Portfolio demo</small></div>
+</aside>
+<main class="main">
+<header class="topbar"><div><span class="crumb">Моё пространство /</span><b id="currentPage"> Обзор</b></div><div class="top-actions"><span class="date" id="today"></span><div class="avatar">M</div></div></header>
+<section class="content" id="dashboardView">
+<div class="welcome"><div><span class="eyebrow">ТВОЙ ПРОГРЕСС</span><h1>Планируй меньше.<br><em>Делай важное.</em></h1><p>Собери день из небольших шагов и двигайся к своим целям.</p></div><div class="welcome-art"><div class="art-circle">✓</div><span>один шаг за раз</span></div></div>
+<div class="stats"><article><span>Всего задач</span><strong id="statAll">0</strong><small>В твоём списке</small></article><article><span>В процессе</span><strong id="statActive">0</strong><small>Ещё впереди</small></article><article><span>Выполнено</span><strong id="statDone">0%</strong><small>Продолжай в том же духе</small></article></div>
+<section class="task-panel"><div class="panel-head"><div><h2>Мои задачи</h2><p>Небольшие шаги дают большой результат.</p></div><button id="openForm" class="button primary" type="button">＋ Новая задача</button></div>
+<form id="taskForm" class="task-form hidden"><input id="taskTitle" placeholder="Например, повторить FastAPI" maxlength="120" required><select id="taskPriority"><option value="normal">Обычный приоритет</option><option value="high">Высокий приоритет</option><option value="low">Низкий приоритет</option></select><button class="button primary" type="submit">Добавить</button><button class="button ghost" id="cancelForm" type="button">Отмена</button></form>
+<div class="toolbar"><div class="tabs"><button class="tab selected" data-filter="all">Все</button><button class="tab" data-filter="active">Активные</button><button class="tab" data-filter="done">Завершённые</button></div><input id="search" type="search" placeholder="⌕ Найти задачу…" aria-label="Поиск задач"></div><div id="tasks" class="tasks"><div class="loading">Загружаем задачи…</div></div></section><p class="footnote">Демо-приложение · данные хранятся в локальной базе SQLite</p>
+</section>
+<section class="content settings-view hidden" id="settingsView"><div class="settings-header"><span class="eyebrow">ПОД ТВОЙ СТИЛЬ</span><h1>Настройки <span>TaskFlow</span></h1><p>Настрой интерфейс так, как тебе удобно. Изменения сохраняются автоматически в этом браузере.</p></div>
+<div class="settings-grid">
+<section class="setting-card"><div class="setting-icon">☾</div><h2>Тема оформления</h2><p>Выбери комфортный режим для работы.</p><div class="theme-options" role="group" aria-label="Тема оформления"><button type="button" class="theme-option" data-theme-option="light"><span class="theme-preview preview-light"><i></i><i></i><i></i></span><b>☀ Светлая</b></button><button type="button" class="theme-option" data-theme-option="dark"><span class="theme-preview preview-dark"><i></i><i></i><i></i></span><b>☾ Тёмная</b></button></div></section>
+<section class="setting-card"><div class="setting-icon">◉</div><h2>Акцентный цвет</h2><p>Выбери цвет кнопок, ссылок и активных элементов.</p><div class="accent-options" role="group" aria-label="Акцентный цвет"><button type="button" data-accent-option="blue" aria-label="Синий" title="Синий" style="--swatch:#4565ee"></button><button type="button" data-accent-option="violet" aria-label="Фиолетовый" title="Фиолетовый" style="--swatch:#8558dd"></button><button type="button" data-accent-option="green" aria-label="Зелёный" title="Зелёный" style="--swatch:#168b70"></button><button type="button" data-accent-option="orange" aria-label="Оранжевый" title="Оранжевый" style="--swatch:#ea8138"></button></div></section>
+<section class="setting-card"><div class="setting-icon">☷</div><h2>Вид списка задач</h2><p>Компактный вариант позволяет видеть больше задач сразу.</p><div class="density-options"><button type="button" data-density-option="comfortable">Обычный</button><button type="button" data-density-option="compact">Компактный</button></div></section>
+<section class="setting-card"><div class="setting-icon">◎</div><h2>Режим фокуса</h2><p>Скрывает завершённые задачи из списка и помогает сосредоточиться на оставшихся.</p><label class="toggle-line" for="focusToggle"><span>Включить режим фокуса</span><input type="checkbox" id="focusToggle" role="switch"><span class="toggle-track"></span></label></section>
+</div><div class="settings-footer"><button type="button" class="button ghost" id="resetSettings">↺ Вернуть настройки по умолчанию</button><button type="button" class="button primary" id="returnDashboard">К моим задачам →</button></div></section>
+</main><div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body></html>
