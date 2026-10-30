@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TaskFlow — задачи в порядке</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <section id="authView" class="auth-view">
+        <div class="auth-art">
+            <div class="art-brand">✓ taskflow</div>
+
+            <div class="art-message">
+                Меньше хаоса.<br>
+                <em>Больше результата.</em>
+            </div>
+
+            <p>Твои планы, задачи и прогресс — в одном месте.</p>
+            <div class="art-ornament">✓</div>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-card">
+                <div class="eyebrow">ДОБРО ПОЖАЛОВАТЬ</div>
+                <h1 id="authHeading">С возвращением!</h1>
+                <p id="authSubtitle">
+                    Войди, чтобы продолжить свой день.
+                </p>
+
+                <div class="auth-tabs">
+                    <button type="button" class="active" data-mode="login">
+                        Вход
+                    </button>
+                    <button type="button" data-mode="register">
+                        Регистрация
+                    </button>
+                </div>
+
+                <form id="authForm" autocomplete="on">
+                    <label>
+                        Имя пользователя
+                        <input
+                            id="authUsername"
+                            name="username"
+                            autocomplete="username"
+                            minlength="3"
+                            maxlength="50"
+                            pattern="[A-Za-z0-9_]{3,50}"
+                            required
+                            placeholder="например, developer123"
+                        >
+                    </label>
+
+                    <label>
+                        Пароль
+                        <input
+                            id="authPassword"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            minlength="8"
+                            maxlength="128"
+                            required
+                            placeholder="Не менее 8 символов"
+                        >
+                    </label>
+
+                    <p id="authError" class="error-message" role="alert"></p>
+
+                    <button class="primary wide" type="submit" id="authSubmit">
+                        Войти в TaskFlow →
+                    </button>
+                </form>
+
+                <p class="auth-note">
+                    Демонстрационный проект на FastAPI · SQLite
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div id="appView" class="app-shell" hidden>
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-symbol">✓</span>
+                taskflow
+            </div>
+
+            <div class="user-chip">
+                <span id="userAvatar">U</span>
+                <div>
+                    <strong id="usernameLabel">Пользователь</strong>
+                    <small>Моё пространство</small>
+                </div>
+            </div>
+
+            <div class="side-caption">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+
+            <nav class="side-nav">
+                <button class="side-link active" data-filter="all">
+                    ▦ <span>Все задачи</span>
+                </button>
+                <button class="side-link" data-filter="active">
+                    ◷ <span>В процессе</span>
+                </button>
+                <button class="side-link" data-filter="done">
+                    ✓ <span>Выполнено</span>
+                </button>
+            </nav>
+
+            <div class="side-caption settings-caption">
+                ПЕРСОНАЛИЗАЦИЯ
+            </div>
+
+            <button id="settingsButton" class="side-link">
+                ⚙ <span>Настройки</span>
+            </button>
+
+            <div class="side-bottom">
+                <div class="daily-tip">
+                    <strong>✦ Совет дня</strong>
+                    <p>
+                        Большая цель начинается с одной маленькой задачи.
+                    </p>
+                </div>
+
+                <button id="logoutButton" class="logout">
+                    ↪ Выйти из аккаунта
+                </button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <span>
+                    Моё пространство /
+                    <strong id="pageName">Обзор</strong>
+                </span>
+                <span class="today" id="today"></span>
+                <button id="mobileLogout" class="mobile-logout" type="button">
+                    Выйти
+                </button>
+            </header>
+
+            <div class="content">
+                <section id="dashboardView">
+                    <div class="hero">
+                        <div>
+                            <span class="eyebrow">ТВОЙ ПРОГРЕСС</span>
+                            <h1>
+                                Планируй меньше.<br>
+                                <em>Делай важное.</em>
+                            </h1>
+                            <p>
+                                Маленькие шаги каждый день приводят
+                                к большим результатам.
+                            </p>
+                        </div>
+
+                        <div class="hero-mark">✓</div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat">
+                            <span>Всего задач</span>
+                            <strong id="statAll">0</strong>
+                            <small>В твоём списке</small>
+                        </div>
+
+                        <div class="stat">
+                            <span>В процессе</span>
+                            <strong id="statActive">0</strong>
+                            <small>Ещё впереди</small>
+                        </div>
+
+                        <div class="stat">
+                            <span>Выполнено</span>
+                            <strong id="statDone">0%</strong>
+                            <small>Так держать!</small>
+                        </div>
+                    </div>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Мои задачи</h2>
+                                <p>Всё важное — в одном месте.</p>
+                            </div>
+
+                            <button id="newTaskButton" class="primary">
+                                ＋ Новая задача
+                            </button>
+                        </div>
+
+                        <form id="taskForm" class="new-task" hidden>
+                            <input
+                                id="taskTitle"
+                                placeholder="Что нужно сделать?"
+                                required
+                                maxlength="120"
+                            >
+
+                            <select id="taskPriority">
+                                <option value="normal">Обычный</option>
+                                <option value="high">Высокий</option>
+                                <option value="low">Низкий</option>
+                            </select>
+
+                            <button class="primary" type="submit">
+                                Добавить
+                            </button>
+
+                            <button class="secondary" id="cancelTask" type="button">
+                                Отмена
+                            </button>
+                        </form>
+
+                        <div class="toolbar">
+                            <div class="tabs">
+                                <button class="active" data-filter="all">
+                                    Все
+                                </button>
+                                <button data-filter="active">
+                                    Активные
+                                </button>
+                                <button data-filter="done">
+                                    Завершённые
+                                </button>
+                            </div>
+
+                            <input
+                                id="searchInput"
+                                type="search"
+                                placeholder="⌕ Найти задачу..."
+                            >
+                        </div>
+
+                        <div id="taskList" class="task-list"></div>
+                    </section>
+                </section>
+
+                <section id="settingsView" class="panel settings-panel" hidden>
+                    <span class="eyebrow">ПЕРСОНАЛИЗАЦИЯ</span>
+                    <h2>Настройки</h2>
+                    <p>Сделай пространство удобным для себя.</p>
+
+                    <div class="settings-row">
+                        <div>
+                            <strong>Тёмная тема</strong>
+                            <small>Переключить оформление приложения</small>
+                        </div>
+
+                        <label class="switch">
+                            <input id="darkMode" type="checkbox">
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <strong>Компактный список</strong>
+                            <small>Уместить больше задач на экране</small>
+                        </div>
+
+                        <label class="switch">
+                            <input id="compactMode" type="checkbox">
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <strong>Цвет интерфейса</strong>
+                            <small>Выбери акцент</small>
+                        </div>
+
+                        <div class="colors">
+                            <button class="color-choice blue" data-color="blue" aria-label="Синий" title="Синий"></button>
+                            <button class="color-choice purple" data-color="purple" aria-label="Фиолетовый" title="Фиолетовый"></button>
+                            <button class="color-choice green" data-color="green" aria-label="Зелёный" title="Зелёный"></button>
+                        </div>
+                    </div>
+                </section>
+
+                <footer>
+                    TaskFlow · FastAPI + SQLAlchemy + JWT · Portfolio demo
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
